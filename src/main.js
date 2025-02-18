@@ -12,37 +12,59 @@ const refs = {
   gallery: document.querySelector('.gallery'),
 };
 
-refs.loader.classList.add('hidden');
-
 refs.form.addEventListener('submit', handleSubmit);
 
 function handleSubmit(e) {
   e.preventDefault();
 
-  const searchText = refs.input.value;
+  const searchText = refs.input.value.trim();
 
   if (searchText === '') {
-    return iziToast.error({
+    return iziToast.warning({
       position: 'topRight',
-      title: 'ERROR',
+      title: 'WARN',
       message: 'You have not specified any search parameters.',
     });
   }
 
-  refs.loader.classList.remove('hidden');
+  clear();
+  showLoader();
 
   findImages(searchText)
     .then(data => {
-      refs.gallery.innerHTML = '';
+      if (data.data.hits.length === 0) {
+        return iziToast.error({
+          title: 'ERROR',
+          message: `Sorry, there are no images matching your search query. Please try again!`,
+          position: 'topRight',
+        });
+      }
+
       createHTML(data.data.hits);
     })
-    .catch(err => {
-      iziToast.error({
+    .catch(error => {
+      return iziToast.error({
         title: 'ERROR',
-        message: `Sorry, there are no images matching your search query. Please try again!`,
+        message: `Error fetching images: ${error}`,
         position: 'topRight',
       });
     });
 
+  removeLoader();
+
   e.target.reset();
+}
+
+// ------------------------
+
+function showLoader() {
+  refs.loader.classList.add('hidden');
+}
+
+function removeLoader() {
+  refs.loader.classList.remove('hidden');
+}
+
+function clear() {
+  refs.gallery.innerHTML = '';
 }
