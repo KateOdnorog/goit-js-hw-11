@@ -33,7 +33,8 @@ function handleSubmit(e) {
   findImages(searchText)
     .then(data => {
       if (data.data.hits.length === 0) {
-        return iziToast.error({
+        removeLoader;
+        iziToast.error({
           title: 'ERROR',
           message: `Sorry, there are no images matching your search query. Please try again!`,
           position: 'topRight',
@@ -43,7 +44,8 @@ function handleSubmit(e) {
       createHTML(data.data.hits);
     })
     .catch(error => {
-      return iziToast.error({
+      removeLoader();
+      iziToast.error({
         title: 'ERROR',
         message: `Error fetching images: ${error}`,
         position: 'topRight',
