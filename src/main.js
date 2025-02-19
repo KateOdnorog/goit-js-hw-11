@@ -20,7 +20,7 @@ function handleSubmit(e) {
   const searchText = refs.input.value.trim();
 
   if (searchText === '') {
-    return iziToast.warning({
+    iziToast.warning({
       position: 'topRight',
       title: 'WARN',
       message: 'You have not specified any search parameters.',
@@ -28,12 +28,13 @@ function handleSubmit(e) {
   }
 
   clear();
-  showLoader();
+  removeLoader();
 
   findImages(searchText)
     .then(data => {
       if (data.data.hits.length === 0) {
-        removeLoader;
+        clear();
+        showLoader();
         iziToast.error({
           title: 'ERROR',
           message: `Sorry, there are no images matching your search query. Please try again!`,
@@ -44,7 +45,8 @@ function handleSubmit(e) {
       createHTML(data.data.hits);
     })
     .catch(error => {
-      removeLoader();
+      clear();
+      showLoader();
       iziToast.error({
         title: 'ERROR',
         message: `Error fetching images: ${error}`,
@@ -52,7 +54,7 @@ function handleSubmit(e) {
       });
     });
 
-  removeLoader();
+  showLoader();
 
   e.target.reset();
 }
